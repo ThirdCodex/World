@@ -70,13 +70,14 @@ namespace Utilities
 
         public void Disconnect ()
         {
-            // Close the Listen thread first so sockets will be free
+            // First we set connected to false to prevent any new negotiations
+            // while we are trying to disconnect. Then we request to end the
+            // connection cleanly. This is a request to send the 'client end'
+            // event from the world server which also send it to ourselves to
+            // wakeup any errant listener threads
             connected = false;
-            listenThread.Join();
-
-            // Then request that the server remove and cleanup anything
-            // associated with this connection
             Request(req_end);
+            listenThread.Join();
 
             // Finally dispose of any sockets
             world.Dispose();
@@ -159,25 +160,30 @@ namespace Utilities
             this.listenThread.Start();
             this.listenEvent.WaitOne();
 
-            // Request access from the world server.
+            // Finally request access from the world server
             Request(req_access);
             Console.WriteLine("Connected with id " + id);
         }
 
+        // While connected listen for events from the World server
         private void ListenProc (EventHandler handler)
         {
-            if (!connected)
-                return;
-
 			var listener = new NanomsgListener();
 			listener.AddSocket(world);
 			listener.ReceivedMessage += socketId =>
 				{
+                    // If called while not connected simply do nothing, we just
+                    // want the listener to wakeup to then see that it isn't
+                    // connected so it can join the main thread
+                    if (!connected)
+                        return;
+
                     var worldEvent = NextEvent();
                     handler(worldEvent.type, worldEvent.properties);
 				};
             this.listenEvent.Set();
-
+            // TODO: Put a timeout on the Listen so we can handle a bad 
+            // connection
             while (connected)
                 listener.Listen(null);
         }

@@ -124,6 +124,7 @@ public class World
                 else if (e[0] == "END") {
                     Console.WriteLine("Ending Connection: " + request);
                     registered.Remove(e[1]);
+                    eventChannel.Insert(e[1] + " end");
                     reply = e[1] + "-ACK";
                 }
 
