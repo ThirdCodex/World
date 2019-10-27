@@ -21,6 +21,7 @@ public class Player
     {
         Client client = new Client("tcp://127.0.0.1");
         client.Connect(Handler);
+        // Simulate other things happening in the main thread before exiting
         Thread.Sleep(2500);
         client.Disconnect();
         return 0;
