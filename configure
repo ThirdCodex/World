@@ -1,0 +1,14 @@
+#!/bin/bash
+
+mkdir -p bin/
+mkdir -p lib/
+
+# Install Nuget
+curl -LOJ https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+mv nuget.exe bin/
+
+# Handle NNanomsg package
+mono bin/nuget.exe install NNanomsg -Version 0.5.2
+mv NNanomsg.0.5.2/ lib/
+cp lib/NNanomsg.0.5.2/lib/net40/NNanomsg.dll bin/
+cp -r lib/NNanomsg.0.5.2/content/net40/* bin/
