@@ -11,4 +11,10 @@ mv nuget.exe bin/
 mono bin/nuget.exe install NNanomsg -Version 0.5.2
 mv NNanomsg.0.5.2/ lib/
 cp lib/NNanomsg.0.5.2/lib/net40/NNanomsg.dll bin/
+# Extract platform specific shared objects
 cp -r lib/NNanomsg.0.5.2/content/net40/* bin/
+
+# Handle MoonSharp package
+mono bin/nuget.exe install MoonSharp -Version 2.0.0
+mv MoonSharp.2.0.0.0/ lib/
+cp lib/MoonSharp.2.0.0.0/lib/net40-client/MoonSharp.Interpreter.dll bin
