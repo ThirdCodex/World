@@ -1,32 +1,43 @@
-require "Vec3"
+Vec3 = require "Vec3"
 
-function next_path_point (E)
-    E.position = E.path[E.path_point];
-    if (E.path_point >= #E.path) then
-        E.path_point = 1;
+PATH = {
+    Vec3:New(2,0,-12),
+    Vec3:New(-2,0,-12),
+    Vec3:New(-2,0,-9),
+    Vec3:New(2,0,-9)
+}
+
+function NextPath (E)
+    E._internal.position = E._internal.path[E._internal.path_point];
+    if (E._internal.path_point >= #E._internal.path) then
+        E._internal.path_point = 1;
     else
-        E.path_point = E.path_point + 1
+        E._internal.path_point = E._internal.path_point + 1
     end
-    E.direction = (E.path[E.path_point] - E.position):normalize();
+    E._internal.direction = (E._internal.path[E._internal.path_point] - E._internal.position):Normalize()
 end
 
-function init (E)
-    E.position = nil
-    E.direction = nil
-    E.path_point = 1
-    E.move_per_second = 5.0
-    E.path = {
-		Vec3(2,0,-12),
-		Vec3(-2,0,-12),
-		Vec3(-2,0,-9),
-		Vec3(2,0,-9)
+function Init (E)
+    E._internal = {}
+    E._internal.position = nil
+    E._internal.direction = nil
+    E._internal.path_point = 1
+    E._internal.speed = 1
+    E._internal.path = {
+        Vec3:New(2,0,-12),
+		Vec3:New(-2,0,-12),
+		Vec3:New(-2,0,-9),
+		Vec3:New(2,0,-9)
     }
-    next_path_point(E)
+    NextPath(E)
 end
 
-function update (E, dt)
-    broadcast(E, "position", E.position + (E.direction * (E.move_per_second * dt)))
-    if (E.position:near(E.path[E.path_point])) then
-        next_path_point(E)
+function Step (E, dt)
+    E._internal.position = E._internal.position + (E._internal.direction * (E._internal.speed * dt))
+    E.position_set(E._internal.position.x,
+                   E._internal.position.y,
+                   E._internal.position.z)
+    if (E._internal.position:Near(E._internal.path[E._internal.path_point])) then
+        NextPath(E)
     end
 end

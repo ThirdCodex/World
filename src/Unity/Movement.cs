@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Script;
+using ClientScriptEngine;
 
 public class Movement : MonoBehaviour
 {
-    private MoveScript script;
+    private Lua L;
+    private Entity E;
 
     void Awake ()
     {
-        script = new MoveScript();
-        ScriptHandler.Register(script);
+        E = new Entity(gameObject);
+        L = new Lua(Debug.Log);
+        L.Init(E);
     }
 
     // Start is called before the first frame update
@@ -21,6 +23,6 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
-        gameObject.transform.position = new Vector3(script.location.x, script.location.y, script.location.z);
+        L.Step(E, Time.deltaTime);
     }
 }
