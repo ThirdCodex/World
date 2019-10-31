@@ -33,6 +33,7 @@ function Init (E)
 end
 
 function Step (E, dt)
+    print(E._internal.position)
     E._internal.position = E._internal.position + (E._internal.direction * (E._internal.speed * dt))
     E.position_set(E._internal.position.x,
                    E._internal.position.y,
